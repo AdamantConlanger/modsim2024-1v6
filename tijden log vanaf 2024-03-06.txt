@@ -1,0 +1,107 @@
+2024-03-01 en 2024-03-02: 5 uurtjes of zo.
+2024-03-06:
+Begin 10:30.
+End 11:00 of zo.
+Begin 13:15.
+End 15:00.
+2024-03-07:
+Begin 11:45.
+End 13:30.
+Begin 15:15.
+End 16:15.
+Begin (very little bit) 17:30.
+End 18:00.
+Begin 20:30.
+End 20:45.
+2024-03-08:
+Begin 08:15.
+End 11:30.
+Begin 17:30.
+End 18:00.
+Begin 20:38.
+End 21:56.
+2024-03-09:
+Begin 07:45.
+End 12:02.
+Begin 13:41.
+End 14:20.
+Begin 14:22.
+[note: at 14:58, the program is essentially in running state.
+All it needs is a config compiler and some defaults and stuff.]
+End 15:15.
+Begin 15:28.
+End 17:46.
+Begin 18:20.
+End 19:37.
+2024-03-10:
+Begin 10:00.
+End 14:10.
+Begin 15:17.
+End 17:00.
+2024-03-13:
+Begin 15:24.
+End 17:57.
+Begin 18:05.
+End 18:59.
+Begin 19:47.
+[note: at ~21:40, other than file inclusions, we're ready for debugging.]
+End 21:50.
+2024-03-15:
+Begin 10:27.
+[note: start debugging!]
+End 15:29.
+Begin 15:47.
+End 15:53.
+Begin 15:56.
+End 18:26.
+Begin 18:41.
+End 19:09.
+Begin 19:19.
+End 19:26.
+[note: I consider it functionally complete and ready for use.
+From this point onwards, it'll only receive expansions.]
+2024-03-17:
+Begin ~10:20.
+Stop 11:01.
+Begin ~16:00.
+End 16:52.
+2024-03-18:
+Begin 08:46.
+End 11:58.
+Begin 12:46.
+End ~13:30.
+Begin 15:01.
+End 16:20.
+2024-03-20:
+Begin 07:51.
+End ~10:00.
+Begin ~12:30.
+End 14:20.
+2024-03-22:
+Begin 08:37.
+End 09:06.
+Begin 09:27.
+End 13:37.
+2024-03-23:
+Begin 08:50.
+End 13:20.
+2024-03-24:
+half an hour or so somewhere.
+2024-03-25:
+Begin ~19:00. (also did stuff in LaTeX from ~11:00 til ~14:00 or sth)
+[in total probably 30 mins of break spread across.]
+End 23:38.
+2024-03-26:
+Begin 06:54.
+End 08:30.
+Begin 9:37.
+End 10:09.
+Begin 10:27.
+End 13:16.
+2024-03-27:
+[it's just for fun at this point, really. Cleaning up analysis module.]
+Begin 08:10.
+End 08:59.
+2024-03-28:
+[Now it's not just for fun anymore]
+Begin 18:24.

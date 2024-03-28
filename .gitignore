@@ -1,3 +1,16 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
 # History files
 .Rhistory
 .Rapp.history
@@ -47,3 +60,7 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+outputs/*
+debug_outputs/*
+modsim2024-1v5.Rproj
