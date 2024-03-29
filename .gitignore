@@ -63,3 +63,4 @@ rsconnect/
 
 outputs/*
 modsim2024-1v6.Rproj
+resources/persistent_stuff.rds
