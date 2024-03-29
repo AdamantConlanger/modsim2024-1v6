@@ -65,15 +65,4 @@ print("Finished saving persistent stuff.")
 
 print("Finished application execution.")
 
-# TODO: write the missing playstyles
 # TODO: write guide file
-# TODO: write a better summarizer for the data (like OLD/include/simulation_data_setup.r)
-# TODO: deal with the TODOs in every file
-# TODO: make it so that the user can choose to get a statistical summary of the suite results. A true summary.
-
-# TODO: note to self: rlang::last_trace()
-# TODO: note to self: is.element()
-# TODO: maybe "list(1, 2) %in% list(list(1, 2))" and "list(1, 2) %in% list(1, 2)" are weird
-# TODO: note to self: tools::assertCondition()
-# TODO: note to self: message()
-# TODO: note to self: a <- list(); a$b$c <- 3; print(a$b$c) works. But a[[2]]$b <- 4 does not.
