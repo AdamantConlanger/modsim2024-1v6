@@ -488,30 +488,6 @@ parse_configuration <- function() {
         # Should be stored somewhere separate so it doesn't clunkily get stored here the way it does so now.
     }
 
-    # define a function "guess_executor" for performing a guess
-    # TODO: make this maybe not take round_config or contestant, but playstyle, parameters, round_settings, round_data
-    guess_executor <- function(contestant, contestant_index, round_configuration) {
-        # get the guessing functions from the environment where this function is defined
-        guessing_functions <- get(
-            "compiled_playstyles_guessing_functions",
-            envir = parent.env(environment()),
-            inherits = FALSE
-        )
-
-        # get the correct guessing function for the playstyle of this contestant
-        guessing_function <- guessing_functions[[contestant$playstyle]]
-
-        # call that guessing function
-        parameters <- contestant$parameters
-        guessing_output <- guessing_function(parameters, contestant_index, round_configuration)
-
-        # update the contestant parameters
-        contestant$parameters <- guessing_output$parameters
-
-        # return guess and updated contestant
-        return(list(guess = contestant_output$guess, contestant = contestant))
-    }
-
     # TODO: rewrite this part well
     # define an object "base_sim_config" that describes the basis for what every sim_config will start out as.
     base_simulation_configuration <- list(
@@ -551,7 +527,8 @@ parse_configuration <- function() {
         base_simulation_configuration = base_simulation_configuration,
         initial_contestants = initial_contestants,
         has_at_least_one_player = has_at_least_one_player
-    ))
+    )) # TODO: make this match with names in other files
+    # TODO: add guessing functions to this
 
     # return the compiled configuration
     return(compiled_configuration)

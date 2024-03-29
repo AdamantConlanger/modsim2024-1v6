@@ -1,73 +1,90 @@
 source("./program_parts/global_functions_stuff.r")
 
+# performs a suite of simulations
 perform_suite <- function(configuration) {
     # get the relevant stuff from the configuration
     suite_size <- configuration$suite_size
+
+    # TODO: store simulation-initial values to the data_store here, like base_contestants
+    # TODO: store global settings to the data_store here, like omega_size
 
     # log start of simulations
     print(paste0("Starting simulation suite of size ", suite_size, "."))
 
     # run simulations
     for (simulation_index in sane_sequence(from = 1, to = suite_size)) {
-        # run simulation and receive its raw data store (truly raw; absolutely no filtering)
-        simulation_data <- run_simulation(configuration$base_simulation_configuration)
-
-        # TODO: add simulation_data to appropriate spot in the configuration object here
+        # run simulation and receive its raw data
+        configuration$data_store$simulations[[simulation_index]] <- run_simulation(configuration)
     }
 
     # log end of simulations
     print(paste0("Finished simulation suite of size ", suite_size, "."))
+
+    # return the configuration with the suite data
+    return(configuration)
 }
 
-run_simulation <- function(sim_config) {
-    round_output_data <- list()
-    result <- list()
-    result$collected_data <- list()
-    result$round_config_default <- sim_config$round_config_default
-    result$rounds_total <- sim_config$rounds_total
-    round_config <- sim_config$round_config_default
-    for (round_index in sane_sequence(from = 1, to = sim_config$rounds_total)) {
-        prev_round_data <- round_output_data
-        round_config$round_settings$round_index <- round_index
-        round_config$prev_round_data <- prev_round_data
-        round_output_data <- run_round(round_config)
-        result$collected_data[[paste("round", round_index)]] <- round_output_data
+# performs a Brier game simulation
+run_simulation <- function(configuration) {
+    # get simulation-initial base values for contestants and their parameters
+    contestants <- configuration$base_contestants
+
+    # set up simulation data object
+    simulation_data <- list()
+
+    # run rounds
+    for (round_index in sane_sequence(from = 1, to = configuration$rounds_per_simulation)) {
+        # run round and receive its resulting output
+        round_result_object <- run_round(configuration, round_index, contestants)
+
+        # update contestants
+        contestants <- round_result_object$contestants
+
+        # put the data in the simulation data
+        simulation_data[[round_index]] <- round_result_object$round_data
     }
-    return(result)
+
+    # return the simulation data
+    return(simulation_data)
 }
 
-run_round <- function(round_config) {
-    cur_round_data <- round_config$round_data_initial_state
-    prev_round_data <- round_config$prev_round_data
-    round_settings <- round_config$round_settings
-    guess_executor <- round_config$guess_executor
+# performs a round of the Brier game
+run_round <- function(configuration, round_index, contestants) {
+    # get guess executor function from configuration
+    guess_executor <- configuration$guess_executor
 
-    cur_round_data$reality <- generate_reality(round_settings)
+    # set up round data object
+    round_data <- list()
 
-    for (contestant_index in seq_along(prev_round_data$contestants)) {
-        contestant_output <- guess_executor(
-            prev_round_data$contestants[[contestant_index]],
-            contestant_index,
-            sane_modify_list(round_config, list(cur_round_data = cur_round_data))
-        )
-        cur_round_data$contestant_guesses[[contestant_index]] <- contestant_output$guess
-        cur_round_data$contestants[[contestant_index]] <- contestant_output$contestant
-
-        # TODO: move lambda calcs to analysis
-        lambda <- calculate_lambda(contestant_output$guess, cur_round_data$reality)
-        cur_round_data$contestant_lambdas[[contestant_index]] <- lambda
-        previous_loss <- prev_round_data$contestant_losses[[contestant_index]]
-        cur_round_data$contestant_losses[[contestant_index]] <- previous_loss + lambda
+    # generate (or read) reality
+    if (configuration$use_user_realities) {
+        round_data$reality <- configuration$user_realities[[round_index]]
+    } else {
+        round_data$reality <- sample.int(configuration$omega_size, size = 1)
     }
 
-    return(cur_round_data)
+    # let each of the contestants guess
+    for (contestant_index in seq_along(contestants)) {
+        # get the guessing functions from the environment where this function is defined
+        guessing_functions <- configuration$compiled_playstyles_guessing_functions
+
+        # get the correct guessing function for the playstyle of this contestant
+        guessing_function <- guessing_functions[[contestants[[contestant_index]]$playstyle]]
+
+        # get the parameters of this contestant
+        parameters <- contestants[[contestant_index]]$parameters
+
+        # call the guessing function
+        contestant_result_output <- guessing_function(parameters, contestant_index, configuration)
+
+        # update the contestant's parameters
+        contestants[[contestant_index]]$parameters <- contestant_result_output$parameters
+
+        # put the guess and updated parameters in the round data
+        round_data$contestant_guesses[[contestant_index]] <- contestant_result_output$guess
+        round_data$contestant_parameters[[contestant_index]] <- contestant_result_output$parameters
+    }
+
+    # return updated contestants and round data
+    return(list(contestants = contestants, round_data = round_data))
 }
-
-
-# reality generation for Brier game
-generate_reality <- function(round_settings) {
-    if (round_settings$use_user_realities) {
-        return(round_settings$user_realities[[round_settings$round_index]])
-    }
-    return(sample.int(round_settings$omega_size, size = 1))
-} # uniformly chooses an element of omega
