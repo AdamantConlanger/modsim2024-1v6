@@ -8,7 +8,7 @@ vovk_algorithm <- function(parameters, player_index, configuration, round_data, 
     omega <- sane_sequence(from = 1, to = omega_size)
     contestants_so_far <- sane_sequence(from = 1, to = player_index - 1)
     current_weights <- parameters$weights
-    contestant_guesses <- round_data$contestant_guesses
+    contestant_guesses <- round_data$guesses
     reality <- round_data$reality # for updating weights afterwards
 
     # if there are no contestants before the player, return a uniform guess
@@ -28,16 +28,16 @@ vovk_algorithm <- function(parameters, player_index, configuration, round_data, 
     next_weights <- c()
     for (outcome in omega) {
         # we calculate what the lambdas of the preceding contestants would be if the outcome were the reality
-        contestant_lambdas <- c()
+        lambdas <- c()
         for (contestant_index in contestants_so_far) {
-            contestant_lambdas[[contestant_index]] <- calculate_lambda(contestant_guesses[[contestant_index]], outcome)
+            lambdas <- c(lambdas, calculate_lambda(contestant_guesses[[contestant_index]], outcome))
         }
         # and we use those values to calculate the G value for this outcome
-        g_values[[outcome]] <- -log(sum(current_weights * exp(-contestant_lambdas)))
+        g_values <- c(g_values, -log(sum(current_weights * exp(-lambdas))))
 
-        # if reality == outcome, we need those contestant_lambdas for updating weights, so why not just do it now?
+        # if reality == outcome, we need those lambdas for updating weights, so why not just do it now?
         if (outcome == reality) {
-            next_weights <- current_weights * exp(-contestant_lambdas)
+            next_weights <- current_weights * exp(-lambdas)
         }
     }
 

@@ -5,8 +5,20 @@ perform_suite <- function(configuration) {
     # get the relevant stuff from the configuration
     suite_size <- configuration$suite_size
 
-    # TODO: store simulation-initial values to the data_store here, like base_contestants
-    # TODO: store global settings to the data_store here, like omega_size
+    configuration$data_store$globals <- list(
+        contestants = configuration$contestants,
+        suite_size = configuration$suite_size,
+        rounds_per_simulation = configuration$rounds_per_simulation,
+        omega_size = configuration$omega_size,
+        use_seed = configuration$use_seed,
+        use_predetermined_realities = configuration$use_predetermined_realities
+    )
+    if (configuration$use_seed) {
+        configuration$data_store$globals$custom_seed <- configuration$custom_seed
+    }
+    if (configuration$use_predetermined_realities) {
+        configuration$data_store$globals$predetermined_realities <- configuration$predetermined_realities
+    }
 
     # log start of simulations
     print(paste0("Starting simulation suite of size ", suite_size, "."))
@@ -27,7 +39,7 @@ perform_suite <- function(configuration) {
 # performs a Brier game simulation
 run_simulation <- function(configuration) {
     # get simulation-initial base values for contestants and their parameters
-    contestants <- configuration$base_contestants
+    contestants <- configuration$contestants
 
     # set up simulation data object
     simulation_data <- list()
@@ -57,18 +69,16 @@ run_round <- function(configuration, round_index, contestants) {
     round_data <- list()
 
     # generate (or read) reality
-    if (configuration$use_user_realities) {
-        round_data$reality <- configuration$user_realities[[round_index]]
+    if (configuration$use_predetermined_realities) {
+        round_data$reality <- configuration$predetermined_realities[[round_index]]
     } else {
         round_data$reality <- sample.int(configuration$omega_size, size = 1)
     }
 
     # let each of the contestants guess
     for (contestant_index in seq_along(contestants)) {
-        # get the guessing functions from the environment where this function is defined
-        guessing_functions <- configuration$compiled_playstyles_guessing_functions
-
         # get the correct guessing function for the playstyle of this contestant
+        guessing_functions <- configuration$guessing_functions
         guessing_function <- guessing_functions[[contestants[[contestant_index]]$playstyle]]
 
         # get the parameters of this contestant
@@ -87,8 +97,8 @@ run_round <- function(configuration, round_index, contestants) {
         contestants[[contestant_index]]$parameters <- contestant_result_output$parameters
 
         # put the guess and updated parameters in the round data
-        round_data$contestant_guesses[[contestant_index]] <- contestant_result_output$guess
-        round_data$contestant_parameters[[contestant_index]] <- contestant_result_output$parameters
+        round_data$guesses[[contestant_index]] <- contestant_result_output$guess
+        round_data$parameters[[contestant_index]] <- contestant_result_output$parameters
     }
 
     # return updated contestants and round data

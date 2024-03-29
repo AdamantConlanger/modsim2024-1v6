@@ -1,13 +1,23 @@
 source("./program_parts/configuration_parsing_stuff.r")
 source("./program_parts/analysis_stuff.r")
-source("./program_parts/result_handling_stuff.r")
 source("./program_parts/data_cleanup_stuff.r")
 source("./program_parts/simulation_stuff.r")
+source("./program_parts/exporting_stuff.r")
+source("./program_parts/visualization_stuff.r")
+source("./program_parts/jsonification_stuff.r")
 
 print("Finished sourcing source files.")
 
 # load stuff that needs to persist on into the next execution of this application
-recovered_stuff <- readRDS("./resources/persistent_stuff.rds")
+if (file.access("./resources/persistent_stuff.rds", mode = 0) == 0) {
+    if (file.access("./resources/persistent_stuff.rds", mode = 4) == -1) {
+        # file exists but isn't readable
+        stop("./resources/persistent_stuff.rds exists, but the program can't read it.")
+    }
+    try(recovered_stuff <- readRDS("./resources/persistent_stuff.rds"))
+} else {
+    recovered_stuff <- list()
+}
 
 print("Finished recovering persistent stuff.")
 
@@ -38,6 +48,7 @@ configuration <- analyze_data(configuration)
 print("Finished performing analysis on data.")
 
 # print a user-friendly representation of the data and analysis results to a JSON file or something
+# (and prettify the data a bit)
 configuration <- print_data(configuration)
 
 print("Finished human-readably writing data to file.")
