@@ -75,7 +75,13 @@ run_round <- function(configuration, round_index, contestants) {
         parameters <- contestants[[contestant_index]]$parameters
 
         # call the guessing function
-        contestant_result_output <- guessing_function(parameters, contestant_index, configuration)
+        contestant_result_output <- guessing_function(
+            parameters,
+            contestant_index,
+            configuration,
+            round_data,
+            round_index
+        )
 
         # update the contestant's parameters
         contestants[[contestant_index]]$parameters <- contestant_result_output$parameters

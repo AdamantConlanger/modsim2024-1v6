@@ -3,13 +3,13 @@ source("./program_parts/global_functions_stuff.r")
 # TODO: make sure everything is rendered as vector in other files too.
 
 # Vovk-Zhdanov algorith for optimal strategy in the Brier game
-vovk_algorithm <- function(parameters, player_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
+vovk_algorithm <- function(parameters, player_index, configuration, round_data, round_index) {
+    omega_size <- configuration$omega_size
     omega <- sane_sequence(from = 1, to = omega_size)
     contestants_so_far <- sane_sequence(from = 1, to = player_index - 1)
     current_weights <- parameters$weights
-    contestant_guesses <- round_config$cur_round_data$contestant_guesses
-    reality <- round_config$cur_round_data$reality # for updating weights afterwards
+    contestant_guesses <- round_data$contestant_guesses
+    reality <- round_data$reality # for updating weights afterwards
 
     # if there are no contestants before the player, return a uniform guess
     if (player_index == 1) {

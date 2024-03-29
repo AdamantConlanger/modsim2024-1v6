@@ -1,9 +1,13 @@
 source("./program_parts/global_functions_stuff.r")
 
 # always guesses a point mass on reality
-cheater_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
-    reality <- round_config$cur_round_data$reality
+cheater_guess <- function(parameters,
+                          contestant_index,
+                          configuration,
+                          round_data,
+                          round_index) {
+    omega_size <- configuration$omega_size
+    reality <- round_data$reality
 
     # create a sequence of zeros, and simply make the correct outcome a one
     guess <- rep.int(c(0), times = omega_size)
@@ -13,8 +17,12 @@ cheater_guess <- function(parameters, contestant_index, round_config) {
 }
 
 # always guesses a random point mass
-confident_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
+confident_guess <- function(parameters,
+                            contestant_index,
+                            configuration,
+                            round_data,
+                            round_index) {
+    omega_size <- configuration$omega_size
 
     # create a sequence of zeros, and put a one in some random outcome
     guess <- rep.int(c(0), times = omega_size)
@@ -24,9 +32,13 @@ confident_guess <- function(parameters, contestant_index, round_config) {
 }
 
 # always guesses a random point mass that's not centered at reality
-wrong_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
-    reality <- round_config$cur_round_data$reality
+wrong_guess <- function(parameters,
+                        contestant_index,
+                        configuration,
+                        round_data,
+                        round_index) {
+    omega_size <- configuration$omega_size
+    reality <- round_data$reality
 
     # if omega_size == 1, there aren't any wrong outcomes to choose from,
     # so we need to handle that case separately
@@ -40,14 +52,18 @@ wrong_guess <- function(parameters, contestant_index, round_config) {
     if (random_index >= reality) {
         random_index <- random_index + 1
     }
-    resulting_guess[[random_index]] <- 1
+    guess[[random_index]] <- 1
 
     return(list(guess = guess, parameters = parameters))
 }
 
 # always guesses the uniform distribution
-uniform_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
+uniform_guess <- function(parameters,
+                          contestant_index,
+                          configuration,
+                          round_data,
+                          round_index) {
+    omega_size <- configuration$omega_size
 
     # create uniform sequence
     guess <- rep.int(c(1 / omega_size), times = omega_size)
@@ -56,9 +72,12 @@ uniform_guess <- function(parameters, contestant_index, round_config) {
 }
 
 # starts off using cheater, then switches to using wrong a certain number of rounds
-toggle_cheater_wrong_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
-    round_index <- round_config$round_settings$round_index
+toggle_cheater_wrong_guess <- function(parameters,
+                                       contestant_index,
+                                       configuration,
+                                       round_data,
+                                       round_index) {
+    omega_size <- configuration$omega_size
     T_val <- parameters$T
 
     # toggle between cheater and wrong based on the round index
@@ -81,15 +100,19 @@ toggle_cheater_wrong_guess <- function(parameters, contestant_index, round_confi
         if (random_index >= reality) {
             random_index <- random_index + 1
         }
-        resulting_guess[[random_index]] <- 1
+        guess[[random_index]] <- 1
 
         return(list(guess = guess, parameters = parameters))
     }
 }
 
 # starts off using wrong, then switches to using cheater a certain number of rounds
-toggle_wrong_cheater_guess <- function(parameters, contestant_index, round_config) {
-    omega_size <- round_config$round_settings$omega_size
+toggle_wrong_cheater_guess <- function(parameters,
+                                       contestant_index,
+                                       configuration,
+                                       round_data,
+                                       round_index) {
+    omega_size <- configuration$omega_size
     T_val <- parameters$T
 
     # toggle between cheater and wrong based on the round index
@@ -106,7 +129,7 @@ toggle_wrong_cheater_guess <- function(parameters, contestant_index, round_confi
         if (random_index >= reality) {
             random_index <- random_index + 1
         }
-        resulting_guess[[random_index]] <- 1
+        guess[[random_index]] <- 1
 
         return(list(guess = guess, parameters = parameters))
     } else {
@@ -119,8 +142,11 @@ toggle_wrong_cheater_guess <- function(parameters, contestant_index, round_confi
 }
 
 # performs a fixed sequence of guesses
-house_guess <- function(parameters, contestant_index, round_config) {
-    round_index <- round_config$round_settings$round_index
+house_guess <- function(parameters,
+                        contestant_index,
+                        configuration,
+                        round_data,
+                        round_index) {
     house_probabilities <- parameters$house_probabilities
 
     # get the guess from the list of guesses and make sure it's a vector
@@ -130,7 +156,11 @@ house_guess <- function(parameters, contestant_index, round_config) {
 }
 
 # consistently guesses a given guess
-consistent_guess <- function(parameters, contestant_index, round_config) {
+consistent_guess <- function(parameters,
+                             contestant_index,
+                             configuration,
+                             round_data,
+                             round_index) {
     guess <- parameters$guess
 
     # rescale the guess to normalize it
