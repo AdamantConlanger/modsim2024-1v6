@@ -1,23 +1,18 @@
 source("./program_parts/global_functions_stuff.r")
 
 perform_suite <- function(configuration) {
-    # get the relevant stuff from the compiled configuration object
+    # get the relevant stuff from the configuration
     suite_size <- configuration$suite_size
-    base_sim_config <- configuration$base_sim_config
 
     # log start of simulations
     print(paste0("Starting simulation suite of size ", suite_size, "."))
 
-    # save the suite settings
-    save_suite_store(configuration)
-
     # run simulations
-    for (sim_index in sane_sequence(from = 1, to = suite_size)) {
+    for (simulation_index in sane_sequence(from = 1, to = suite_size)) {
         # run simulation and receive its raw data store (truly raw; absolutely no filtering)
-        sim_store <- run_simulation(base_sim_config)
+        simulation_data <- run_simulation(configuration$base_simulation_configuration)
 
-        # save the simulation info and data store to data bank
-        save_sim_store(sim_store, sim_index)
+        # TODO: add simulation_data to appropriate spot in the configuration object here
     }
 
     # log end of simulations

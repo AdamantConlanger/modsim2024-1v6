@@ -289,7 +289,7 @@ parse_configuration <- function() {
         user_realities = list()
     )
     # define default playstyles (variable called default_playstyles)
-    source("./resources/builtin_playstyles.r") # TODO: make this define the right stuff
+    source("./program_parts/builtin_playstyles.r") # TODO: make this define the right stuff
 
     # source "configuration" and "contestants" from the user config file
     source("./inputs/user_config.r", local = TRUE)
@@ -426,9 +426,9 @@ parse_configuration <- function() {
             # the reality outcome in every round of every simulation
             list("sims", "FORALL", "collected_data", "FORALL", "reality", "PRESERVE"),
             # the lambda of every contestant in every round of every simulation
-            list("sims", "FORALL", "collected_data", "FORALL", "contestant_loss_deltas", "PRESERVE"),
+            list("sims", "FORALL", "collected_data", "FORALL", "contestant_lambdas", "PRESERVE"),
             # the cumulative loss of every contestant in every round of every simulation
-            list("sims", "FORALL", "collected_data", "FORALL", "contestant_loss_cumulates", "PRESERVE"),
+            list("sims", "FORALL", "collected_data", "FORALL", "contestant_losses", "PRESERVE"),
             # the size of the suite
             list("suite", "suite_size", "PRESERVE"),
             # the base size of omega for the suite
@@ -490,7 +490,7 @@ parse_configuration <- function() {
 
     # define a function "guess_executor" for performing a guess
     # TODO: make this maybe not take round_config or contestant, but playstyle, parameters, round_settings, round_data
-    guess_executor <- function(contestant, contestant_index, round_config) {
+    guess_executor <- function(contestant, contestant_index, round_configuration) {
         # get the guessing functions from the environment where this function is defined
         guessing_functions <- get(
             "compiled_playstyles_guessing_functions",
@@ -503,7 +503,7 @@ parse_configuration <- function() {
 
         # call that guessing function
         parameters <- contestant$parameters
-        guessing_output <- guessing_function(parameters, contestant_index, round_config)
+        guessing_output <- guessing_function(parameters, contestant_index, round_configuration)
 
         # update the contestant parameters
         contestant$parameters <- guessing_output$parameters
@@ -514,10 +514,10 @@ parse_configuration <- function() {
 
     # TODO: rewrite this part well
     # define an object "base_sim_config" that describes the basis for what every sim_config will start out as.
-    base_sim_config <- list(
+    base_simulation_configuration <- list(
         rounds_total = working_configuration$rounds_per_simulation,
-        round_config_default = list(
-            prev_round_data = list(
+        round_configuration_default = list(
+            previous_round_data = list(
                 reality = NULL,
                 contestants = compiled_contestants,
                 contestant_guesses = NULL,
@@ -548,7 +548,7 @@ parse_configuration <- function() {
         compiled_contestants = compiled_contestants,
         data_to_keep = data_to_keep,
         guess_executor = guess_executor,
-        base_sim_config = base_sim_config,
+        base_simulation_configuration = base_simulation_configuration,
         initial_contestants = initial_contestants,
         has_at_least_one_player = has_at_least_one_player
     ))
