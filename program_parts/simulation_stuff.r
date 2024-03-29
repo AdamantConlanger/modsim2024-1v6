@@ -1,4 +1,4 @@
-source("auxiliary_systems/global_functions.r")
+source("./program_parts/global_functions_stuff.r")
 
 perform_suite <- function(configuration) {
     # get the relevant stuff from the compiled configuration object
@@ -61,10 +61,11 @@ run_round <- function(round_config) {
         cur_round_data$contestant_guesses[[contestant_index]] <- contestant_output$guess
         cur_round_data$contestants[[contestant_index]] <- contestant_output$contestant
 
-        loss_delta <- calculate_loss_delta(contestant_output$guess, cur_round_data$reality)
-        cur_round_data$contestant_loss_deltas[[contestant_index]] <- loss_delta
-        loss_so_far <- prev_round_data$contestant_loss_cumulates[[contestant_index]]
-        cur_round_data$contestant_loss_cumulates[[contestant_index]] <- loss_so_far + loss_delta
+        # TODO: move lambda calcs to analysis
+        lambda <- calculate_lambda(contestant_output$guess, cur_round_data$reality)
+        cur_round_data$contestant_lambdas[[contestant_index]] <- lambda
+        previous_loss <- prev_round_data$contestant_losses[[contestant_index]]
+        cur_round_data$contestant_losses[[contestant_index]] <- previous_loss + lambda
     }
 
     return(cur_round_data)
