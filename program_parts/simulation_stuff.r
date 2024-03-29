@@ -3,7 +3,7 @@ source("./program_parts/global_functions_stuff.r")
 perform_suite <- function(configuration) {
     # get the relevant stuff from the compiled configuration object
     suite_size <- configuration$suite_size
-    generate_sim_config <- configuration$generate_sim_config
+    base_sim_config <- configuration$base_sim_config
 
     # log start of simulations
     print(paste0("Starting simulation suite of size ", suite_size, "."))
@@ -13,11 +13,8 @@ perform_suite <- function(configuration) {
 
     # run simulations
     for (sim_index in sane_sequence(from = 1, to = suite_size)) {
-        # generate simulation-specific configuration
-        sim_config <- generate_sim_config(sim_index)
-
         # run simulation and receive its raw data store (truly raw; absolutely no filtering)
-        sim_store <- run_simulation(sim_config)
+        sim_store <- run_simulation(base_sim_config)
 
         # save the simulation info and data store to data bank
         save_sim_store(sim_store, sim_index)
@@ -45,7 +42,7 @@ run_simulation <- function(sim_config) {
 }
 
 run_round <- function(round_config) {
-    cur_round_data <- round_config$round_data_scaffold
+    cur_round_data <- round_config$round_data_initial_state
     prev_round_data <- round_config$prev_round_data
     round_settings <- round_config$round_settings
     guess_executor <- round_config$guess_executor
