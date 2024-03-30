@@ -50,13 +50,16 @@ visualize_data <- function(configuration) {
     }
     plottables[[the_series_label]] <- plottable
 
-    print(plottables)
-
     # save the new plottables in the persistent stuff
     configuration$persistent_stuff$plottables <- plottables
 
     # convert it to an actually plottable format
     the_series <- names(plottables)
+    for (column in plottables) {
+        if (length(column) != configuration$rounds_per_simulation) {
+            stop("Incompatible past data; you should delete resources/persistent_stuff.rds.")
+        }
+    }
     plottables_dataframe <- as.data.frame(plottables)
     plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
     df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
