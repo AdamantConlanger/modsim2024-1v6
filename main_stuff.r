@@ -64,5 +64,3 @@ saveRDS(configuration$persistent_stuff, file = "./resources/persistent_stuff.rds
 print("Finished saving persistent stuff.")
 
 print("Finished application execution.")
-
-# TODO: write guide file
