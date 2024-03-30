@@ -17,8 +17,6 @@ visualize_data <- function(configuration) {
     sim_data <- configuration$data_store$simulations[["simulation 1"]]
     plottables <- configuration$recovered_stuff$plottables
 
-    jsonlite::write_json(configuration, "some.json", pretty = TRUE) # TODO: remove debug
-
     # gather the data we want to visualize from this round
     plottable <- c()
     for (round_name in names_or_seq_along(sim_data)) {
