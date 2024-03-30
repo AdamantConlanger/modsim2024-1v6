@@ -4,6 +4,8 @@ configuration <- list(
     omega_size = 3,
     use_seed = TRUE,
     custom_seed = 25,
+    keep_parameters = FALSE,
+    keep_final_parameters = TRUE,
     use_predetermined_realities = TRUE,
     predetermined_realities = readRDS("./resources/soccer_realities.rds")
     # note: the above causes the actual recorded outcome of the matches to be used as realities.

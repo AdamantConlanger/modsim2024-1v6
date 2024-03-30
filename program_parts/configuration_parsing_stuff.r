@@ -122,8 +122,10 @@ parse_configuration <- function(recovered_stuff) {
         use_predetermined_realities = FALSE,
         predetermined_realities = c(),
         keep_parameters = TRUE,
+        keep_final_parameters = FALSE,
         recovered_stuff = recovered_stuff
     )
+
     # define playstyles (variable called initial_playstyles)
     source("./program_parts/builtin_playstyles.r")
 
@@ -178,7 +180,7 @@ parse_configuration <- function(recovered_stuff) {
         }
         if (configuration$rounds_per_simulation > 0) {
             if (!all(sane_is_integer(configuration$predetermined_realities)) ||
-                max(configuration$predetermined_realities) > working_configuration$omega_size ||
+                max(configuration$predetermined_realities) > configuration$omega_size ||
                 min(configuration$predetermined_realities) < 1
             ) {
                 stop("predetermined_realities must be a vector with one outcome as reality for every round.")
@@ -187,6 +189,9 @@ parse_configuration <- function(recovered_stuff) {
     }
     if (!is.logical(configuration$keep_parameters)) {
         stop("keep_parameters must be a logical value.")
+    }
+    if (!is.logical(configuration$keep_final_parameters)) {
+        stop("keep_final_parameters must be a logical value.")
     }
 
     # set random seed

@@ -34,7 +34,9 @@ print_data <- function(configuration) {
             the_round$parameters <- the_new_parameters
 
             if (!configuration$keep_parameters) {
-                the_round <- the_round[names(the_round) != "parameters"]
+                if (!configuration$keep_final_parameters || round_index != configuration$rounds_per_simulation) {
+                    the_round <- the_round[names(the_round) != "parameters"]
+                }
             }
 
             the_simulation[[round_index]] <- the_round

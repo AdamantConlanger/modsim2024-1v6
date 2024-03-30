@@ -14,7 +14,8 @@ configuration <- list(
     use_short_contestants = TRUE, # whether to show the parameters of the contestants in the display output.
     use_predetermined_realities = TRUE, # if set to TRUE, uses realities provided here instead of random ones.
     predetermined_realities = c(1, 1, 2, 2, 3, 3, 2, 2, 1, 1), # sequence of realities to use in that case.
-    keep_parameters = TRUE # whether to show the contestants' parameters in the output (when they have params).
+    keep_parameters = FALSE, # whether to show the contestants' parameters in the output (when they have params).
+    keep_final_parameters = TRUE # whether to show the parameters in the final round(s), given the above is FALSE.
 )
 
 # you can specify the contestants here.

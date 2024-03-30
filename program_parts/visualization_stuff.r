@@ -9,13 +9,15 @@ visualize_data <- function(configuration) {
         return(configuration)
     }
 
-    if (!hasName(configuration$persistent_stuff, "plottables")) {
-        configuration$persistent_stuff$plottables <- list()
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
     }
 
     # we get the data we'll visualize and we get the persistent data we kept about the previous suites
     sim_data <- configuration$data_store$simulations[["simulation 1"]]
-    plottables <- configuration$persistent_stuff$plottables
+    plottables <- configuration$recovered_stuff$plottables
+
+    jsonlite::write_json(configuration, "some.json", pretty = TRUE) # TODO: remove debug
 
     # gather the data we want to visualize from this round
     plottable <- c()
@@ -39,7 +41,18 @@ visualize_data <- function(configuration) {
     the_series_label <- paste0(the_series_label, ", #Un=", as.character(number_of_uniforms))
 
     # add the data to the plottables
+    if (hasName(plottables, the_series_label)) {
+        the_original_series_label <- the_series_label
+        label_index <- 1
+        the_series_label <- paste(the_original_series_label, label_index)
+    }
+    while (hasName(plottables, the_series_label)) {
+        label_index <- label_index + 1
+        the_series_label <- paste(the_original_series_label, label_index)
+    }
     plottables[[the_series_label]] <- plottable
+
+    print(plottables)
 
     # save the new plottables in the persistent stuff
     configuration$persistent_stuff$plottables <- plottables
