@@ -122,7 +122,7 @@ parse_configuration <- function(recovered_stuff) {
         use_predetermined_realities = FALSE,
         predetermined_realities = c(),
         keep_parameters = TRUE,
-        recovered_stuff = recovered_stuff # TODO: do stuff with this
+        recovered_stuff = recovered_stuff
     )
     # define playstyles (variable called initial_playstyles)
     source("./program_parts/builtin_playstyles.r")

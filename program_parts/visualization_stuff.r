@@ -1,7 +1,6 @@
 source("./program_parts/global_functions_stuff.r")
 
 visualize_data <- function(configuration) {
-    # TODO: make this at least somewhat functioning.
     library(ggplot2)
 
     # make sure there's a player at the end

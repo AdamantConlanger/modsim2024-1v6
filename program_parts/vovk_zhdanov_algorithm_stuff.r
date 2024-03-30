@@ -1,6 +1,5 @@
 source("./program_parts/global_functions_stuff.r")
 
-# TODO: make sure everything is rendered as vector in other files too.
 
 # Vovk-Zhdanov algorith for optimal strategy in the Brier game
 vovk_algorithm <- function(parameters, player_index, configuration, round_data, round_index) {

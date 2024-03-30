@@ -13,7 +13,6 @@ print_data <- function(configuration) {
 
     # summarize out all contestant parameters and children if the user config tells us to do so
     if (configuration$use_short_contestants) {
-        # TODO: make sure this is what use_short_contestants is called in the configuration
         data_store$globals$contestants <- short_contestants
     }
 
@@ -52,7 +51,6 @@ print_data <- function(configuration) {
     }
     names(data_store$simulations) <- paste("simulation", seq_along(data_store$simulations))
 
-    # TODO: add an easy summarizer here
 
     # jsonify the data store and write it to the json file
     print(paste0("We're about to print the data to ", json_filename, "."))
