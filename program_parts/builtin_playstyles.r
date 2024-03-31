@@ -86,7 +86,7 @@ toggle_cheater_wrong_guess <- function(parameters,
     if (round_index < T_val) {
         # create a sequence of zeros, and put a one in some random outcome
         guess <- rep.int(c(0), times = omega_size)
-        guess[[sample.int(omega_size, size = 1)]] <- 1
+        guess[[reality]] <- 1
 
         return(list(guess = guess, parameters = parameters))
     } else {
@@ -138,7 +138,7 @@ toggle_wrong_cheater_guess <- function(parameters,
     } else {
         # create a sequence of zeros, and put a one in some random outcome
         guess <- rep.int(c(0), times = omega_size)
-        guess[[sample.int(omega_size, size = 1)]] <- 1
+        guess[[reality]] <- 1
 
         return(list(guess = guess, parameters = parameters))
     }
