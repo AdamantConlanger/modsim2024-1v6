@@ -140,3 +140,225 @@ visualize_weights <- function(configuration) {
     # return the configuration
     return(configuration)
 }
+
+
+visualize_lambdas <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants) - 1)
+    names(plottables) <- list("B365", "BW", "IW", "PS", "VC", "WH")
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        lambdas <- round_data$lambdas
+        if (length(lambdas) == 0) {
+            next
+        }
+
+        for (competitor_index in sane_sequence(from = 1, to = length(contestants) - 1)) {
+            if (identical(plottables[[competitor_index]], c())) {
+                plottables[[competitor_index]] <- c(lambdas[[competitor_index]])
+            } else {
+                plottables[[competitor_index]] <- c(plottables[[competitor_index]], lambdas[[competitor_index]])
+            }
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_point(aes(colour = series))
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
+
+visualize_losses_excess <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants) - 1)
+    names(plottables) <- list("B365", "BW", "IW", "PS", "VC", "WH")
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        losses <- round_data$losses
+        if (length(losses) == 0) {
+            next
+        }
+        excesses <- losses - min(losses[sane_sequence(from = 1, to = length(contestants) - 1)])
+
+
+        for (competitor_index in sane_sequence(from = 1, to = length(contestants) - 1)) {
+            if (identical(plottables[[competitor_index]], c())) {
+                plottables[[competitor_index]] <- c(excesses[[competitor_index]])
+            } else {
+                plottables[[competitor_index]] <- c(plottables[[competitor_index]], excesses[[competitor_index]])
+            }
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_line(aes(colour = series))
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
+
+
+visualize_losses_excess_with_player <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants))
+    names(plottables) <- list("B365", "BW", "IW", "PS", "VC", "WH", "player")
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        losses <- round_data$losses
+        if (length(losses) == 0) {
+            next
+        }
+        excesses <- losses - min(losses[sane_sequence(from = 1, to = length(contestants))])
+
+
+        for (competitor_index in sane_sequence(from = 1, to = length(contestants))) {
+            if (identical(plottables[[competitor_index]], c())) {
+                plottables[[competitor_index]] <- c(excesses[[competitor_index]])
+            } else {
+                plottables[[competitor_index]] <- c(plottables[[competitor_index]], excesses[[competitor_index]])
+            }
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_line(aes(colour = series))
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
+
+visualize_lambdas_excess_with_player <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants))
+    names(plottables) <- list("B365", "BW", "IW", "PS", "VC", "WH", "player")
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        lambdas <- round_data$lambdas
+        if (length(lambdas) == 0) {
+            next
+        }
+        excesses <- lambdas / min(lambdas)
+
+
+        for (competitor_index in sane_sequence(from = 1, to = length(contestants))) {
+            if (identical(plottables[[competitor_index]], c())) {
+                plottables[[competitor_index]] <- c(excesses[[competitor_index]])
+            } else {
+                plottables[[competitor_index]] <- c(plottables[[competitor_index]], excesses[[competitor_index]])
+            }
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_point(aes(colour = series, alpha = 0.75), size = 1) +
+        geom_smooth(aes(colour = series), method = "loess", fill = NA) +
+        coord_cartesian(ylim = c(1, 1.25))
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
