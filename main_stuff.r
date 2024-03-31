@@ -54,7 +54,8 @@ configuration <- print_data(configuration)
 print("Finished human-readably writing data to file.")
 
 # perform data visualization
-configuration <- visualize_data(configuration)
+# configuration <- visualize_data(configuration)
+configuration <- visualize_weights(configuration) # TODO: switch back to regular one
 
 print("Finished visualizing data.")
 

@@ -27,16 +27,22 @@ visualize_data <- function(configuration) {
         plottable <- c(plottable, player_probability)
     }
 
-    # get the number of each important contestant type here
-    number_of_cheaters <- length(contestants[contestants == "cheater"])
-    number_of_wrongs <- length(contestants[contestants == "wrong"])
-    number_of_uniforms <- length(contestants[contestants == "uniform"])
+    # the programmer can switch between these two
+    if (TRUE) {
+        # get the number of each important contestant type here
+        number_of_cheaters <- length(contestants[contestants == "cheater"])
+        number_of_wrongs <- length(contestants[contestants == "wrong"])
+        number_of_uniforms <- length(contestants[contestants == "uniform"])
 
-    # create a label for this plot line
-    the_series_label <- paste0("Ω=", as.character(configuration$omega_size))
-    the_series_label <- paste0(the_series_label, ", #Ch=", as.character(number_of_cheaters))
-    the_series_label <- paste0(the_series_label, ", #Wr=", as.character(number_of_wrongs))
-    the_series_label <- paste0(the_series_label, ", #Un=", as.character(number_of_uniforms))
+        # create a label for this plot line
+        the_series_label <- paste0("Ω=", as.character(configuration$omega_size))
+        the_series_label <- paste0(the_series_label, ", #Ch=", as.character(number_of_cheaters))
+        the_series_label <- paste0(the_series_label, ", #Wr=", as.character(number_of_wrongs))
+        the_series_label <- paste0(the_series_label, ", #Un=", as.character(number_of_uniforms))
+    } else {
+        # create a label for this plot line
+        the_series_label <- paste0("rounds=", as.character(configuration$rounds_per_simulation))
+    }
 
     # add the data to the plottables
     if (hasName(plottables, the_series_label)) {
@@ -60,6 +66,66 @@ visualize_data <- function(configuration) {
             stop("Incompatible past data; you should delete resources/persistent_stuff.rds.")
         }
     }
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_line(aes(colour = series))
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
+
+
+visualize_weights <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    if (!hasName(configuration$recovered_stuff, "plottables")) {
+        configuration$recovered_stuff$plottables <- list()
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants) - 1)
+    names(plottables) <- list("B365", "BW", "IW", "PS", "VC", "WH")
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+        reality <- round_data$reality
+        player_index <- length(round_data$parameters)
+
+        weights <- round_data$parameters[[player_index]]$weights
+        if (length(weights) == 0) {
+            next
+        }
+        if (max(weights) == 0) {
+            stop("all weights are zero; can't make plot.")
+        }
+        weights <- weights / max(weights)
+
+        for (competitor_index in sane_sequence(from = 1, to = length(contestants) - 1)) {
+            if (identical(plottables[[competitor_index]], c())) {
+                plottables[[competitor_index]] <- c(weights[[competitor_index]])
+            } else {
+                plottables[[competitor_index]] <- c(plottables[[competitor_index]], weights[[competitor_index]])
+            }
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
     plottables_dataframe <- as.data.frame(plottables)
     plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
     df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")

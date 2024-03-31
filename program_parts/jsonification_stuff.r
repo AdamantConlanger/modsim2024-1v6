@@ -39,6 +39,15 @@ print_data <- function(configuration) {
                 }
             }
 
+            empty_statement <- TRUE
+
+            # TODO: remove bodge
+            if (configuration$contestants[[1]]$playstyle == "house") {
+                the_list <- list()
+                the_list[["player"]] <- the_round$parameters[["contestant 7"]]
+                the_round$parameters <- the_list
+            }
+
             the_simulation[[round_index]] <- the_round
         }
 
