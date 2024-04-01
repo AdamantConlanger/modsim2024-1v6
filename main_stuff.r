@@ -59,7 +59,8 @@ print("Finished human-readably writing data to file.")
 # configuration <- visualize_lambdas(configuration)
 # configuration <- visualize_losses_excess(configuration)
 # configuration <- visualize_losses_excess_with_player(configuration)
-configuration <- visualize_lambdas_excess_with_player(configuration)
+# configuration <- visualize_lambdas_excess_with_player(configuration)
+configuration <- visualize_losses_for_sim_analysis(configuration)
 
 print("Finished visualizing data.")
 

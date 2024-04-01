@@ -396,9 +396,9 @@ visualize_losses_for_sim_analysis <- function(configuration) {
         only_experts <- losses[sane_sequence(from = 1, to = length(contestants) - 1)]
         min_loss <- min(only_experts)
         if (identical(plottables[[length(contestants) + 1]], c())) {
-            plottables[[length(contestants) + 1]] <- c(min_loss + ln(length(contestants) - 1))
+            plottables[[length(contestants) + 1]] <- c(min_loss + log(length(contestants) - 1))
         } else {
-            new_vector <- c(plottables[[length(contestants) + 1]], min_loss + ln(length(contestants) - 1))
+            new_vector <- c(plottables[[length(contestants) + 1]], min_loss + log(length(contestants) - 1))
             plottables[[length(contestants) + 1]] <- new_vector
         }
     }
@@ -409,12 +409,29 @@ visualize_losses_for_sim_analysis <- function(configuration) {
     plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
     df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
 
+    series_names <- c("well", "poor", "learner", "min loss + ln 2")
+
+    gg_color_hue <- function(n) {
+        hues <- seq(15, 375, length = n + 1)
+        hcl(h = hues, l = 65, c = 100)[1:n]
+    }
+
+    my_colors <- gg_color_hue(length(plottables))
+
     # plot it
     pictureplot <- ggplot(df, aes(rounds, value)) +
         geom_line(aes(colour = series)) +
+        ggtitle("Plot of losses for the binary simulation") +
+        coord_cartesian(ylim = c(0, 0.75)) +
+        ylab("loss") +
+        scale_color_manual(
+            name = "series",
+            labels = series_names,
+            values = my_colors
+        )
 
-        # print it
-        print(pictureplot)
+    # print it
+    print(pictureplot)
 
     # return the configuration
     return(configuration)
