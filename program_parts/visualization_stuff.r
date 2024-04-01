@@ -610,3 +610,6 @@ visualize_losses_for_sim_analysis <- function(configuration) {
     # return the configuration
     return(configuration)
 }
+
+
+# TODO: implement https://stackoverflow.com/a/52304499/18375328
