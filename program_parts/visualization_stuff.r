@@ -106,7 +106,7 @@ visualize_data <- function(configuration) {
     }
     my_colors <- gg_color_hue(length(plottables))
 
-    the_title <- "Plot of the player's predicted probability for the correct outcome, for various configurations"
+    the_title <- "Plot of the player's predicted probability for the\ncorrect outcome, for various configurations"
 
     # plot it
     pictureplot <- ggplot(df, aes(rounds, value)) +
@@ -189,7 +189,7 @@ visualize_weights <- function(configuration) {
     }
     my_colors <- gg_color_hue(length(plottables))
 
-    the_title <- "Plot of the player's weights for various contestants, normalized by round maximum, using soccer data"
+    the_title <- "Plot of the player's weights for various contestants,\nnormalized by round maximum, using soccer data"
 
     # plot it
     pictureplot <- ggplot(df, aes(rounds, value)) +
@@ -344,7 +344,7 @@ visualize_losses_excess <- function(configuration) {
     }
     my_colors <- gg_color_hue(length(plottables))
 
-    the_title <- "Plot of betting house losses exceeding the round minimum excluding the player, using soccer data"
+    the_title <- "Plot of betting house losses exceeding the round\nminimum excluding the player, using soccer data"
 
     # plot it
     pictureplot <- ggplot(df, aes(rounds, value)) +
@@ -424,7 +424,7 @@ visualize_losses_excess_with_player <- function(configuration) {
     my_colors <- gg_color_hue(length(plottables))
 
     the_title <- paste(
-        "Plot of contestant losses exceeding the round minimum, using soccer data"
+        "Plot of contestant losses exceeding the round minimum,\nusing soccer data"
     )
 
     # plot it
