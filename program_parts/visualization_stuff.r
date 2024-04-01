@@ -66,7 +66,9 @@ visualize_data <- function(configuration) {
 
     # plot it
     pictureplot <- ggplot(df, aes(rounds, value)) +
-        geom_line(aes(colour = series))
+        geom_line(aes(colour = series)) +
+        ggtitle("Plot of player's predicted probability for correct outcome") +
+        ylab("probability")
 
     # print it
     print(pictureplot)
