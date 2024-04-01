@@ -40,7 +40,7 @@ visualize_data <- function(configuration) {
     }
 
     # create a label for this plot line
-    the_series_label <- paste0("Ω=", as.character(configuration$omega_size))
+    the_series_label <- paste0("|Ω|=", as.character(configuration$omega_size))
     if (length(contestants[contestants == "cheater"]) != 0) {
         number_of_cheaters <- length(contestants[contestants == "cheater"])
         the_series_label <- paste0(the_series_label, ", #Ch=", as.character(number_of_cheaters))
