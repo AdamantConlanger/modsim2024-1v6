@@ -39,8 +39,6 @@ print_data <- function(configuration) {
                 }
             }
 
-            empty_statement <- TRUE
-
             # TODO: remove bodge
             if (configuration$contestants[[1]]$playstyle == "house") {
                 the_list <- list()
