@@ -362,3 +362,60 @@ visualize_lambdas_excess_with_player <- function(configuration) {
     # return the configuration
     return(configuration)
 }
+
+visualize_losses_for_sim_analysis <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # gather the data we want to visualize from this round
+    plottables <- rep.int(list(c()), times = length(contestants) + 1)
+    names(plottables) <- list("well", "poor", "learner", paste("min loss + ln", as.character(length(contestants) - 1)))
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        losses <- round_data$losses
+        if (length(losses) == 0) {
+            next
+        }
+
+        for (contestant_index in sane_sequence(from = 1, to = length(contestants))) {
+            if (identical(plottables[[contestant_index]], c())) {
+                plottables[[contestant_index]] <- c(losses[[contestant_index]])
+            } else {
+                plottables[[contestant_index]] <- c(plottables[[contestant_index]], losses[[contestant_index]])
+            }
+        }
+        only_experts <- losses[sane_sequence(from = 1, to = length(contestants) - 1)]
+        min_loss <- min(only_experts)
+        if (identical(plottables[[length(contestants) + 1]], c())) {
+            plottables[[length(contestants) + 1]] <- c(min_loss + ln(length(contestants) - 1))
+        } else {
+            new_vector <- c(plottables[[length(contestants) + 1]], min_loss + ln(length(contestants) - 1))
+            plottables[[length(contestants) + 1]] <- new_vector
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_line(aes(colour = series)) +
+
+        # print it
+        print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
