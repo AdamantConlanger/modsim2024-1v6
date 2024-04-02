@@ -703,7 +703,6 @@ visualize_regret_for_sim_analysis <- function(configuration) {
     pictureplot <- ggplot(df, aes(rounds, value)) +
         geom_line(aes(colour = series)) +
         ggtitle("Plot of regrets for various situations") +
-        coord_cartesian(ylim = c(0, 0.75)) +
         ylab("regret") +
         scale_color_manual(
             name = "series",
