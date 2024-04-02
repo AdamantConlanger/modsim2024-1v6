@@ -611,5 +611,112 @@ visualize_losses_for_sim_analysis <- function(configuration) {
     return(configuration)
 }
 
+visualize_regret_for_sim_analysis <- function(configuration) {
+    library(ggplot2)
+
+    # make sure there's a player at the end
+    contestants <- configuration$contestants
+    if ((length(contestants) == 0) || (contestants[[length(contestants)]]$playstyle != "player")) {
+        return(configuration)
+    }
+
+    # make sure we have short contestant names in our own contestants object
+    # note that configuration$contestants always uses non-short contestants usually
+    short_contestants <- list()
+    for (contestant_index in seq_along(contestants)) {
+        short_contestants[[contestant_index]] <- contestants[[contestant_index]]$playstyle
+    }
+    contestants <- short_contestants
+
+    # we get the data we'll visualize
+    sim_data <- configuration$data_store$simulations[["simulation 1"]]
+
+    # create a label for this plot line
+    the_series_label <- paste0("|Ω|=", as.character(configuration$omega_size))
+    if (length(contestants[contestants == "cheater"]) != 0) {
+        number_of_cheaters <- length(contestants[contestants == "cheater"])
+        the_series_label <- paste0(the_series_label, ", #Ch=", as.character(number_of_cheaters))
+    }
+    if (length(contestants[contestants == "wrong"]) != 0) {
+        number_of_wrongs <- length(contestants[contestants == "wrong"])
+        the_series_label <- paste0(the_series_label, ", #Wr=", as.character(number_of_wrongs))
+    }
+    if (length(contestants[contestants == "uniform"]) != 0) {
+        number_of_uniforms <- length(contestants[contestants == "uniform"])
+        the_series_label <- paste0(the_series_label, ", #Un=", as.character(number_of_uniforms))
+    }
+    if (length(contestants[contestants == "consistent"]) != 0) {
+        number_of_consistents <- length(contestants[contestants == "consistent"])
+        the_series_label <- paste0(the_series_label, ", #Cs=", as.character(number_of_consistents))
+    }
+    if (length(contestants[contestants == "confident"]) != 0) {
+        number_of_confidents <- length(contestants[contestants == "confident"])
+        the_series_label <- paste0(the_series_label, ", #Cf=", as.character(number_of_confidents))
+    }
+    if (length(contestants[contestants == "house"]) != 0) {
+        number_of_houses <- length(contestants[contestants == "house"])
+        the_series_label <- paste0(the_series_label, ", #Ho=", as.character(number_of_houses))
+    }
+    if (length(contestants[contestants == "toggle_cheater_wrong"]) != 0) {
+        number_of_togglecws <- length(contestants[contestants == "toggle_cheater_wrong"])
+        the_series_label <- paste0(the_series_label, ", #TCW=", as.character(number_of_togglecws))
+    }
+    if (length(contestants[contestants == "toggle_wrong_cheater"]) != 0) {
+        number_of_togglewcs <- length(contestants[contestants == "toggle_wrong_cheater"])
+        the_series_label <- paste0(the_series_label, ", #TWC=", as.character(number_of_togglewcs))
+    }
+
+    # gather the data we want to visualize from this round
+    plottables <- list(c())
+    names(plottables) <- list(the_series_label)
+    for (round_name in names_or_seq_along(sim_data)) {
+        round_data <- sim_data[[round_name]]
+
+        regrets <- round_data$regrets
+        if (length(regrets) == 0) {
+            next
+        }
+
+        if (identical(plottables[[1]], c())) {
+            plottables[[1]] <- c(regrets[[length(contestants)]])
+        } else {
+            plottables[[1]] <- c(plottables[[1]], regrets[[length(contestants)]])
+        }
+    }
+
+    # convert it to an actually plottable format
+    the_series <- names(plottables)
+    plottables_dataframe <- as.data.frame(plottables)
+    plottables_dataframe$rounds <- 1:configuration$rounds_per_simulation
+    df <- reshape2::melt(plottables_dataframe, id.vars = "rounds", variable.name = "series")
+
+    series_names <- names(plottables)
+
+    gg_color_hue <- function(n) {
+        hues <- seq(15, 375, length = n + 1)
+        hcl(h = hues, l = 65, c = 100)[1:n]
+    }
+
+    my_colors <- gg_color_hue(length(plottables))
+
+    # plot it
+    pictureplot <- ggplot(df, aes(rounds, value)) +
+        geom_line(aes(colour = series)) +
+        ggtitle("Plot of regrets for various situations") +
+        coord_cartesian(ylim = c(0, 0.75)) +
+        ylab("regret") +
+        scale_color_manual(
+            name = "series",
+            labels = series_names,
+            values = my_colors
+        )
+
+    # print it
+    print(pictureplot)
+
+    # return the configuration
+    return(configuration)
+}
+
 
 # TODO: implement https://stackoverflow.com/a/52304499/18375328

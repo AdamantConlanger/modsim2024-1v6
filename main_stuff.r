@@ -61,6 +61,7 @@ configuration <- visualize_data(configuration)
 # configuration <- visualize_losses_excess_with_player(configuration)
 # configuration <- visualize_lambdas_excess_with_player(configuration)
 # configuration <- visualize_losses_for_sim_analysis(configuration)
+# configuration <- visualize_regret_for_sim_analysis(configuration)
 
 print("Finished visualizing data.")
 

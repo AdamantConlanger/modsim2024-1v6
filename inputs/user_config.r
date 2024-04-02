@@ -9,6 +9,5 @@ configuration <- list(
 contestants <- list(
     "cheater",
     "wrong",
-    "wrong",
     "player"
 )
