@@ -172,6 +172,81 @@ consistent_guess <- function(parameters,
     return(list(guess = guess, parameters = parameters))
 }
 
+# guesses a discretized normal distribution centered around reality
+normal_guess <- function(parameters,
+                         contestant_index,
+                         configuration,
+                         round_data,
+                         round_index) {
+    # set some values
+    sd <- parameters$sd
+    omega_size <- configuration$omega_size
+    reality <- round_data$reality
+
+    # get the densities of a suitable normal distribution centered at reality at the outcomes
+    guess <- c()
+    for (outcome in sane_sequence(from = 1, to = omega_size)) {
+        guess <- c(guess, dnorm(outcome, mean = reality, sd = sd))
+    }
+
+    # rescale the guess so it's a probability distribution and can be returned as a guess
+    guess <- guess / sum(guess)
+
+    return(list(guess = guess, parameters = parameters))
+}
+
+# guesses a discretized normal distribution centered around reality and increases sd every time
+normal_worsening_guess <- function(parameters,
+                                   contestant_index,
+                                   configuration,
+                                   round_data,
+                                   round_index) {
+    # set some values
+    sd <- parameters$sd
+    omega_size <- configuration$omega_size
+    reality <- round_data$reality
+
+    # get the densities of a suitable normal distribution centered at reality at the outcomes
+    guess <- c()
+    for (outcome in sane_sequence(from = 1, to = omega_size)) {
+        guess <- c(guess, dnorm(outcome, mean = reality, sd = sd))
+    }
+
+    # rescale the guess so it's a probability distribution and can be returned as a guess
+    guess <- guess / sum(guess)
+
+    # update sd based on rounds
+    parameters$sd <- sd * (round_index + 1) / round_index
+
+    return(list(guess = guess, parameters = parameters))
+}
+
+# guesses a discretized normal distribution centered around reality and decreases sd every time
+normal_improving_guess <- function(parameters,
+                                   contestant_index,
+                                   configuration,
+                                   round_data,
+                                   round_index) {
+    # set some values
+    sd <- parameters$sd
+    omega_size <- configuration$omega_size
+    reality <- round_data$reality
+
+    # get the densities of a suitable normal distribution centered at reality at the outcomes
+    guess <- c()
+    for (outcome in sane_sequence(from = 1, to = omega_size)) {
+        guess <- c(guess, dnorm(outcome, mean = reality, sd = sd))
+    }
+
+    # rescale the guess so it's a probability distribution and can be returned as a guess
+    guess <- guess / sum(guess)
+
+    # update sd based on rounds
+    parameters$sd <- sd * round_index / (round_index + 1)
+
+    return(list(guess = guess, parameters = parameters))
+}
+
 
 
 #######################################################################################################################
@@ -404,6 +479,112 @@ consistent_playstyle_stuff <- list(
     }
 )
 
+normal_playstyle_stuff <- list(
+    guessing_function = normal_guess,
+    parameter_checker = function(parameters, contestant_index, configuration) {
+        if (!is.list(parameters)) {
+            msg <- "Contestants shouldn't have a non-list as parameters entry"
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters) == 1) {
+            parameters <- list(sd = parameters[[1]])
+        } else {
+            msg <- "A normal contestant must have exactly one parameter."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (!is.numeric(parameters$sd)) {
+            msg <- "A normal contestant should have numeric sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (parameters$sd <= 0) {
+            msg <- "A normal contestant should have strictly positive sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters$sd) != 1) {
+            msg <- "A normal contestant should only have a single sd"
+            stop_playstyle(msg, contestant_index)
+        }
+        return(list(playstyle = "normal", parameters = parameters))
+    },
+    parameter_defaulter = function(contestant_index, configuration) {
+        return(list(
+            playstyle = "normal",
+            parameters = list(sd = 1)
+        ))
+    }
+)
+
+normal_worsening_playstyle_stuff <- list(
+    guessing_function = normal_worsening_guess,
+    parameter_checker = function(parameters, contestant_index, configuration) {
+        if (!is.list(parameters)) {
+            msg <- "Contestants shouldn't have a non-list as parameters entry"
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters) == 1) {
+            parameters <- list(sd = parameters[[1]])
+        } else {
+            msg <- "A normal_worsening contestant must have exactly one parameter."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (!is.numeric(parameters$sd)) {
+            msg <- "A normal_worsening contestant should have numeric sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (parameters$sd <= 0) {
+            msg <- "A normal_worsening contestant should have strictly positive sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters$sd) != 1) {
+            msg <- "A normal_worsening contestant should only have a single sd"
+            stop_playstyle(msg, contestant_index)
+        }
+        return(list(playstyle = "normal_worsening", parameters = parameters))
+    },
+    parameter_defaulter = function(contestant_index, configuration) {
+        return(list(
+            playstyle = "normal_worsening",
+            parameters = list(sd = 1)
+        ))
+    }
+)
+
+normal_improving_playstyle_stuff <- list(
+    guessing_function = normal_improving_guess,
+    parameter_checker = function(parameters, contestant_index, configuration) {
+        if (!is.list(parameters)) {
+            msg <- "Contestants shouldn't have a non-list as parameters entry"
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters) == 1) {
+            parameters <- list(sd = parameters[[1]])
+        } else {
+            msg <- "A normal_improving contestant must have exactly one parameter."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (!is.numeric(parameters$sd)) {
+            msg <- "A normal_improving contestant should have numeric sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (parameters$sd <= 0) {
+            msg <- "A normal_improving contestant should have strictly positive sd."
+            stop_playstyle(msg, contestant_index)
+        }
+        if (length(parameters$sd) != 1) {
+            msg <- "A normal_improving contestant should only have a single sd"
+            stop_playstyle(msg, contestant_index)
+        }
+        return(list(playstyle = "normal_improving", parameters = parameters))
+    },
+    parameter_defaulter = function(contestant_index, configuration) {
+        return(list(
+            playstyle = "normal_improving",
+            parameters = list(sd = 1)
+        ))
+    }
+)
+
+
 initial_playstyles <- list(
     player = player_playstyle_stuff,
     cheater = needs_no_parameters_stuff("cheater", cheater_guess),
@@ -413,5 +594,8 @@ initial_playstyles <- list(
     toggle_cheater_wrong = toggle_cheater_wrong_playstyle_stuff,
     toggle_wrong_cheater = toggle_wrong_cheater_playstyle_stuff,
     house = house_playstyle_stuff,
-    consistent = consistent_playstyle_stuff
+    consistent = consistent_playstyle_stuff,
+    normal = normal_playstyle_stuff,
+    normal_worsening = normal_worsening_playstyle_stuff,
+    normal_improving = normal_improving_playstyle_stuff
 )
